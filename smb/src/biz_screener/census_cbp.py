@@ -1,0 +1,9 @@
+"""Census County Business Patterns client for establishment and payroll context.
+
+Inputs: county FIPS list, NAICS codes, year range, optional Census key, cache directory.
+Outputs: ContextSnapshot rows per county, NAICS and year, with suppressed cells marked missing.
+"""
+# def build_cbp_url(year: int, naics: str, county_fips: str, key: str | None) -> str: ...
+# def fetch_cbp(year: int, naics: str, county_fips: str, key: str | None, cache_dir: str) -> dict | None: ...
+# def parse_cbp(payload: list[list[str]]) -> list[dict]: ...
+# def growth_rate(series: list[tuple[int, float]]) -> float | None: ...  # five-year compound growth

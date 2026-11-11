@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "biz-screener"
+version = "0.0.1"
+description = "Screens small cash-flowing Texas businesses for sale using SDE, EBITDA, DCF and SBA 7(a) coverage."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+authors = [{ name = "Srihari Saravanan" }]
+# Standard library only for the MVP.
+dependencies = []
+
+[project.optional-dependencies]
+# Local test runner. Tests run on the local machine, no CI.
+dev = ["pytest>=8"]
+# Planned: charts for the Markdown report (v0.2+).
+charts = ["matplotlib>=3.8"]
+# Planned: TOML parsing on Python 3.9 and 3.10 (tomllib ships with 3.11+).
+config = ["tomli>=2.0; python_version < '3.11'"]
+
+[project.scripts]
+biz-screener = "biz_screener.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

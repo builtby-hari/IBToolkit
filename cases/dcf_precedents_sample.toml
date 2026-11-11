@@ -1,0 +1,154 @@
+# ILLUSTRATIVE CASE. Made-up companies and round numbers for a mid-cap industrial services target.
+# Not real companies, not market data, not a forecast. Money is in $ millions except per-share figures.
+# Cost of capital inputs are round-number assumptions, not sourced market rates.
+
+[meta]
+name = "Illustrative Industrial Services Target"
+illustrative = true
+
+[target]
+net_debt = 500
+diluted_shares = 100       # millions
+ltm_revenue = 1800
+ntm_revenue = 1950
+ltm_ebitda = 360
+ntm_ebitda = 405
+ltm_eps = 1.80
+ntm_eps = 2.05
+
+[dcf]
+revenue_growth = [0.08, 0.07, 0.06, 0.05, 0.04]
+ebitda_margin = [0.205, 0.207, 0.209, 0.210, 0.210]
+da_pct_revenue = 0.04
+capex_pct_revenue = 0.045
+nwc_pct_revenue_change = 0.10   # NWC investment as % of the change in revenue
+tax_rate = 0.25
+risk_free = 0.04
+equity_risk_premium = 0.05
+beta = 1.10
+pre_tax_cost_of_debt = 0.065
+debt_to_capital = 0.25          # target capital structure
+terminal_growth = 0.025
+exit_multiple = 10.5            # x Year 5 EBITDA
+mid_year = true
+
+[[peers]]
+name = "Peer A (Illustrative)"
+price = 36.00
+shares = 120
+net_debt = 900
+revenue_ltm = 2400
+revenue_ntm = 2600
+ebitda_ltm = 480
+ebitda_ntm = 540
+eps_ltm = 2.10
+eps_ntm = 2.40
+
+[[peers]]
+name = "Peer B (Illustrative)"
+price = 32.50
+shares = 200
+net_debt = 1400
+revenue_ltm = 4100
+revenue_ntm = 4400
+ebitda_ltm = 700
+ebitda_ntm = 780
+eps_ltm = 1.90
+eps_ntm = 2.15
+
+[[peers]]
+name = "Peer C (Illustrative)"
+price = 75.00
+shares = 50
+net_debt = 300
+revenue_ltm = 1500
+revenue_ntm = 1650
+ebitda_ltm = 330
+ebitda_ntm = 370
+eps_ltm = 3.90
+eps_ntm = 4.40
+
+[[peers]]
+name = "Peer D (Illustrative)"
+price = 22.00
+shares = 300
+net_debt = 2600
+revenue_ltm = 5200
+revenue_ntm = 5500
+ebitda_ltm = 900
+ebitda_ntm = 960
+eps_ltm = 0.95
+eps_ntm = 1.05
+
+[[peers]]
+name = "Peer E (Illustrative)"
+price = 58.00
+shares = 90
+net_debt = 150
+revenue_ltm = 2000
+revenue_ntm = 2150
+ebitda_ltm = 390
+ebitda_ntm = 430
+eps_ltm = 3.10
+eps_ntm = 3.45
+
+# ILLUSTRATIVE PRECEDENT TRANSACTIONS. Made-up acquirers, targets, dates, values and multiples with round numbers.
+# These are not real deals and not market data. Multiples are EV / LTM revenue and EV / LTM EBITDA at announcement.
+[precedents]
+note = "ILLUSTRATIVE: made-up deals, not real transactions."
+as_of = 2026-10-21
+max_age_years = 3         # the two oldest deals fall outside the window and are left out of the statistics
+
+[[precedents.deals]]
+date = 2025-09-15
+acquirer = "Acquirer 1 (Illustrative)"
+target = "Target 1 (Illustrative)"
+deal_value = 2400
+ev_rev_ltm = 1.9
+ev_ebitda_ltm = 10.2
+source = "Illustrative"
+
+[[precedents.deals]]
+date = 2025-03-10
+acquirer = "Acquirer 2 (Illustrative)"
+target = "Target 2 (Illustrative)"
+deal_value = 1500
+ev_rev_ltm = 1.5
+ev_ebitda_ltm = 9.1
+source = "Illustrative"
+
+[[precedents.deals]]
+date = 2024-11-04
+acquirer = "Acquirer 3 (Illustrative)"
+target = "Target 3 (Illustrative)"
+deal_value = 3800
+ev_rev_ltm = 2.2
+ev_ebitda_ltm = 11.6
+source = "Illustrative"
+
+[[precedents.deals]]
+date = 2024-02-20
+acquirer = "Acquirer 4 (Illustrative)"
+target = "Target 4 (Illustrative)"
+deal_value = 900
+ev_rev_ltm = 1.2
+ev_ebitda_ltm = 8.4
+source = "Illustrative"
+
+[[precedents.deals]]
+date = 2023-06-12
+acquirer = "Acquirer 5 (Illustrative)"
+target = "Target 5 (Illustrative)"
+deal_value = 5200
+ev_rev_ltm = 2.6
+ev_ebitda_ltm = 12.8
+source = "Illustrative"
+
+[[precedents.deals]]
+date = 2021-08-30
+acquirer = "Acquirer 6 (Illustrative)"
+target = "Target 6 (Illustrative)"
+deal_value = 1100
+ev_rev_ltm = 3.1
+ev_ebitda_ltm = 14.5
+source = "Illustrative"

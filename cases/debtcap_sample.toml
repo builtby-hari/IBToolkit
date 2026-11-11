@@ -1,0 +1,97 @@
+# ILLUSTRATIVE CASE. Round numbers for a made-up mid-sized industrial business.
+# Not a real company, not a forecast, not market data. Money is in $ thousands.
+# Rates, limits and the rating grid are illustrative inputs. They are not any rating agency's
+# methodology or any lender's terms; replace them with figures you can cite.
+
+[meta]
+name = "Illustrative Mid-Sized Industrial Business"
+illustrative = true
+
+[company]
+ltm_ebitda = 50000          # $50.0M
+
+[projections]               # Years 1 to 5
+ebitda = [53000, 56000, 58500, 61000, 63500]
+capex = [8000, 8300, 8600, 8900, 9200]
+cash_taxes = [6000, 6500, 7000, 7500, 8000]     # held fixed; not re-computed for interest
+nwc_increase = [1500, 1500, 1400, 1400, 1300]
+
+[limits]
+max_total_leverage = 6.0        # x LTM EBITDA
+max_senior_leverage = 4.0       # senior secured (term loan B plus second lien) x LTM EBITDA
+min_interest_coverage = 2.0     # LTM EBITDA / cash interest
+min_fcf_to_debt = 0.05          # Year 1 cash flow after interest / debt
+cushion_pct = 0.05              # size 5% below the binding maximum
+
+[term_loan_b]                   # first lien
+share = 0.50                    # of total debt
+rate = 0.085                    # all-in, on beginning balance
+amort_pct = 0.01                # of original principal per year
+sweep_pct = 0.50                # of cash flow after mandatory amortization
+
+[senior_notes]                  # unsecured, bullet
+share = 0.30
+rate = 0.105
+
+[second_lien]                   # optional; remove this section for no second lien
+share = 0.20
+rate = 0.115
+
+# Covenant (adjusted) EBITDA. Add-backs are illustrative round numbers. The cap is a % of reported
+# LTM EBITDA before add-backs. 25% matches the cost savings and synergies caps in two SEC-filed credit
+# agreements: Extreme Networks commitment letter term sheet, June 26, 2019 (SEC 8-K, Exhibit 10.1, which
+# also has a 15% general cap), and KLDiscovery Third Amendment to Credit Agreement, August 14, 2024
+# (SEC 8-K, Exhibit 10.2). Those are two examples, not a market survey; set the cap from your own document.
+# Leverage tests size on the capped figure; coverage and FCF / debt use cash EBITDA.
+[covenant_ebitda]
+synergies = 6000                # run-rate cost synergies not yet realized
+restructuring = 2500
+non_recurring = 1500
+pro_forma_acquisitions = 3000   # LTM EBITDA of a business acquired during the period
+other = 1000
+cap_pct = 0.25                  # total add-backs capped at 25% of reported LTM EBITDA
+
+# Optional free-and-clear incremental basket: debt permitted regardless of leverage, the greater of a
+# fixed amount and a % of covenant EBITDA. Illustrative values, not any lender's terms.
+[free_and_clear]
+amount = 25000
+pct_ebitda = 0.50
+
+[sensitivity]
+haircut_step = 0.05             # EBITDA haircut axis: 0%, 5%, 10%, 15%, 20%
+rate_step = 0.01                # rate shift axis: minus 2% to plus 2%
+
+# Best band first. A band is met when debt / EBITDA is at most the maximum AND
+# EBITDA / interest is at least the minimum. The last band catches everything.
+[[rating_grid]]
+rating = "BBB"
+max_leverage = 2.5
+min_coverage = 6.0
+[[rating_grid]]
+rating = "BB+"
+max_leverage = 3.5
+min_coverage = 4.5
+[[rating_grid]]
+rating = "BB"
+max_leverage = 4.25
+min_coverage = 3.5
+[[rating_grid]]
+rating = "BB-"
+max_leverage = 5.0
+min_coverage = 3.0
+[[rating_grid]]
+rating = "B+"
+max_leverage = 5.75
+min_coverage = 2.5
+[[rating_grid]]
+rating = "B"
+max_leverage = 6.5
+min_coverage = 2.0
+[[rating_grid]]
+rating = "B-"
+max_leverage = 7.5
+min_coverage = 1.5
+[[rating_grid]]
+rating = "CCC+"
+max_leverage = 99.0
+min_coverage = 0.0

@@ -1,0 +1,129 @@
+# Settings for the Small Business Acquisition Screener.
+# Copy to config/settings.toml and tune. Every number here is an assumption
+# that should be checked against current comps, the SBA SOP and your own
+# budget. Defaults are illustrative, not market data.
+
+[buyer]
+# Hard cap on the purchase price you will consider (budget cap style).
+max_purchase_price = 1500000
+# Cash you can put in as equity. Must cover the SBA equity injection.
+max_cash_equity = 250000
+# Minimum equity injection share of the price (SBA change of ownership minimum is 10 percent).
+min_equity_injection_pct = 0.10
+# Seller note on FULL standby (no payments for the whole SBA term). Counts as equity up to
+# half the required injection; any excess just reduces the loan. 0 = no seller note.
+seller_standby_note = 0
+# Annual owner living draw. Used for the owner-draw DSCR check.
+owner_living_draw = 90000
+# Target market: "TX" only for the MVP.
+state = "TX"
+# Preferred metro for the location bonus. "austin", "dallas" or "any".
+preferred_metro = "austin"
+
+[industries.gas_station]
+naics = "447"
+sde_multiple_low = 2.0
+sde_multiple_high = 3.0
+ebitda_multiple_low = 3.0
+ebitda_multiple_high = 4.0
+manager_salary_default = 80000
+environmental_flag = true
+
+[industries.liquor_store]
+naics = "445310"
+sde_multiple_low = 2.0
+sde_multiple_high = 3.0
+ebitda_multiple_low = 3.0
+ebitda_multiple_high = 4.0
+manager_salary_default = 75000
+tabc_transfer_flag = true
+
+[industries.laundromat]
+naics = "812310"
+sde_multiple_low = 2.5
+sde_multiple_high = 3.5
+ebitda_multiple_low = 3.5
+ebitda_multiple_high = 4.5
+manager_salary_default = 55000
+
+[industries.car_wash]
+naics = "811192"
+sde_multiple_low = 3.0
+sde_multiple_high = 5.0
+ebitda_multiple_low = 4.0
+ebitda_multiple_high = 6.0
+manager_salary_default = 70000
+
+[valuation]
+# Blend weights must sum to 1.0.
+weight_sde_multiple = 0.50
+weight_dcf = 0.30
+weight_ebitda_multiple = 0.20
+# Use the midpoint of each multiple range when true, otherwise the low end.
+use_midpoint = true
+
+[dcf]
+forecast_years = 5
+revenue_growth_base = 0.03
+maintenance_capex_pct_of_ebitda = 0.12
+# Pass-through (LLC or S-corp) blended tax rate applied to EBITDA less D&A.
+tax_rate = 0.24
+# Discount rate = risk-free rate + size and illiquidity premium + industry premium.
+# Typed risk-free rate, used when --live-rates is off. With --live-rates the run uses
+# FRED DGS10 and stops if it is unavailable or more than 10 days old.
+risk_free_fallback = 0.042
+size_illiquidity_premium = 0.14
+industry_premium = 0.04
+terminal_growth = 0.03
+
+[sba]
+# Loan term in years for business acquisition with goodwill.
+term_years = 10
+# Spread over prime by loan size. Check the current SBA SOP 50 10 before use.
+spread_under_50k = 0.065
+spread_50k_to_250k = 0.060
+spread_250k_to_350k = 0.045
+spread_over_350k = 0.030
+# Typed prime rate, used when --live-rates is off (update when it changes). With
+# --live-rates the run uses FRED DPRIME and stops if it is unavailable or stale.
+prime_fallback = 0.0675
+# SOP 50 10 8.1 App. 15 (effective 2026-10-01): Initial Acquisition and Owner Buyout need
+# 1.25x historical DSC (EBITDA / debt service); Business Expansion needs 1.15x. Projections
+# may not be relied on. Source: sba.gov SOP 50 10 8.1, Appendix 15 para C.2.b.
+min_dscr_lender = 1.25
+
+[scoring.weights]
+valuation_gap = 25
+dscr = 20
+revenue_trend = 15
+concentration = 10
+market_context = 15
+data_quality = 10
+operational_risk = 5
+
+[red_flags]
+# Customer or revenue concentration: top customer or contract share of revenue.
+max_top_customer_share = 0.20
+# Revenue decline for this many consecutive years triggers a flag.
+decline_years_flag = 2
+# Add-backs above this share of reported pre-tax income triggers a flag.
+max_addback_ratio = 0.40
+# Asking price above this multiple of SDE triggers a flag.
+max_asking_sde_multiple = 3.5
+# Lease remaining below this many years triggers a flag.
+min_lease_years_remaining = 5
+# Each flag costs this many points, capped at the cap below.
+penalty_per_flag = 5
+penalty_cap = 20
+
+[alerts]
+# Send Telegram alerts for listings at or above this score.
+min_score_for_alert = 70
+# Send a digest even when there are no new listings.
+send_empty_digest = false
+
+[public_context]
+# Years of CBP data to pull for trend context.
+cbp_years_back = 5
+# Counties to pull context for. Use FIPS codes.
+counties = ["48113", "48085", "48121"]

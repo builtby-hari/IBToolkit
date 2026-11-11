@@ -1,0 +1,134 @@
+# REAL PUBLIC BANK CASE: Hancock Whitney Corporation (NASDAQ: HWC). As-of date 2026-10-20 (last close).
+# Money is in $ millions, shares in millions, per-share values in dollars. Nothing here is invented:
+# each market or filing number cites its source; anything else is labeled ASSUMPTION.
+# Reproduce numbers from SEC XBRL company facts: https://data.sec.gov/api/xbrl/companyfacts/CIK<10 digit CIK>.json
+# Period used for every company: 10-Q for the quarter ended 2026-06-30 (the latest filed 10-Q on the as-of date).
+# LTM = fiscal 2025 + six months 2026 - six months 2025, as reported (GAAP, includes one-time items).
+# HWC filed an 8-K on 2026-10-20 (accession 0001193125-26-426654) for the quarter ended 2026-09-30. It is NOT used,
+# so the target and peers stay on the same June 30 basis. Refresh to September 30 when peers' 10-Qs are filed.
+
+[meta]
+name = "Hancock Whitney Corporation (HWC), as of 2026-10-20"
+as_of = "2026-10-20"
+illustrative = false
+source = "SEC filings (HWC and peer 10-Qs for the quarter ended 2026-06-30, XBRL company facts), FDIC BankFind, U.S. Treasury yield curve and market closes on 2026-10-20; line-by-line citations in the case file"
+
+[target]
+# Source: HWC 10-Q for the quarter ended 2026-06-30, SEC accession 0001193125-26-338672
+# (https://www.sec.gov/Archives/edgar/data/750577/000119312526338672/hwc-20260630.htm), CIK 750577.
+# Cross-check: FDIC BankFind, Hancock Whitney Bank CERT 12441, total assets $36,329M at 2026-06-30
+# (https://api.fdic.gov/banks/institutions?filters=CERT:12441), bank level, within 0.1% of the holding company.
+net_income = 427.4      # LTM: 486.1 (FY2025) + 174.4 (6M 2026) - 233.0 (6M 2025). No preferred stock, so equals net income to common.
+                        # Includes a $98.6M pre-tax net securities loss in 1Q 2026 (10-Q income statement), so LTM is depressed.
+core_net_income = 505.3 # ASSUMPTION (adjustment, not a reported figure): GAAP LTM 427.4 plus the securities loss after tax,
+                        # 98.6 x (1 - 21%) = 77.9. Drives the regression ROTE (14.6% core vs 12.4% GAAP) and the P/E EPS,
+                        # so both sit on the same normalized basis as the DDM forecast below.
+tce = 3456.4            # equity 4,444.1 less goodwill 925.4 less other intangible assets 62.3 (10-Q balance sheet, 2026-06-30)
+total_assets = 36346.0  # 10-Q balance sheet, 2026-06-30
+shares = 81.022         # diluted: 80.471 common shares outstanding per 10-Q balance sheet, 2026-06-30, plus 0.551 dilutive
+                        # securities (2Q 2026 weighted diluted 81.485 less weighted basic 80.934, 10-Q EPS note, XBRL
+                        # WeightedAverageNumberOfDilutedSharesOutstanding and ...SharesOutstandingBasic). Cover page: 80.223 at 2026-07-31.
+dividends = 158.1       # LTM common dividends paid: 153.8 (FY2025) + 82.6 (6M 2026) - 78.2 (6M 2025), cash flow statement
+share_price = 74.13     # NASDAQ close on 2026-10-20, Yahoo Finance chart API (query1.finance.yahoo.com/v8/finance/chart/HWC), unadjusted
+
+[forecast]
+# ASSUMPTION (not sourced): growth runs off GAAP LTM, so year 1 growth of 18% mostly reverses the 1Q 2026 securities loss
+# (98.6 x (1 - 21% tax) = 77.9, which is 18% of LTM net income): year 1 (504.3) is about flat on core LTM (505.3).
+# Later years are plain judgment, not guidance.
+net_income_growth = [0.18, 0.05, 0.05, 0.04, 0.04]
+asset_growth = [0.04, 0.04, 0.04, 0.04, 0.03]   # ASSUMPTION
+
+[capital]
+target_tce_ratio = 0.09   # ASSUMPTION. HWC TCE / assets is 9.5% at 2026-06-30 (3,456.4 / 36,346.0); the model pays out capital above this.
+# ASSUMPTION: total payout (dividends plus buybacks) capped at 85% of net income. Without a cap, the excess capital
+# model would pay out all of year 1 earnings plus the $185M above the 9% target at once (about $559M, 111% of year 1).
+# At 85% (about $429M in year 1) the excess is released over about three years (TCE / assets 9.5% to 9.0% by year 4).
+# Anchor: LTM dividends 158.1 (a 37% payout on GAAP LTM) plus LTM buybacks 327.8 (246.9 FY2025 + 141.1 6M 2026
+# - 60.2 6M 2025, XBRL PaymentsForRepurchaseOfCommonStock) = 485.9 of capital returned, 96% of core LTM earnings.
+# The DDM sheet shows the LTM dividend payout in year 0 next to the projected payouts.
+max_payout = 0.85
+
+[cost_of_equity]          # CAPM
+# Risk-free: US Treasury 10-year par yield 5.12% on 2026-10-20, Treasury daily par yield curve rates
+# (https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value_month=202610).
+risk_free = 0.0512
+# Beta: ASSUMPTION computed by me, not a vendor figure. Slope of HWC monthly price returns on S&P 500 (^GSPC)
+# monthly returns, 59 months from 2021-11 to 2026-10 (partial last month), price only, Yahoo Finance chart API. Result 0.99.
+beta = 0.99
+# ERP: ASSUMPTION. Damodaran implied ERP (FCFE) for year-end 2025, 4.23%
+# (https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/histimpl.html, row 2025). Other houses use 5% to 6%.
+erp = 0.0423
+
+[terminal]
+growth = 0.03             # ASSUMPTION
+ptbv = 1.70               # ASSUMPTION: exit P/TBV on year 5 TCE, set to the peer regression at the projected year 5 ROTE
+                          # (15.7%), which the DDM sheet shows as a cross-check (1.70x). The Gordon leg implies about 2.0x
+                          # ((ROTE - g) / (k - g)); 1.70x is the more conservative of the two. A 1.5x exit with a 15.7% ROTE
+                          # would be internally inconsistent.
+
+[valuation]
+range_pct = 0.10          # football field band around regression and P/E point estimates
+
+# Peers: eight US bank holding companies, $24B to $89B of assets. Same 10-Q basis and formulas as the target.
+# Price: 2026-10-20 close, Yahoo Finance chart API. P/TBV = close / (TCE / shares), TCE = common equity less preferred less
+# goodwill and intangibles from the 10-Q. ROTE = LTM net income to common / period-end TCE (GAAP for peers; the target uses core_net_income, so a one-time loss does not understate it).
+# P/E is TRAILING: close / LTM diluted EPS. No public consensus source was available, so it is not a forward P/E;
+# the model applies it to HWC normalized LTM EPS (core_net_income / shares), not to forecast earnings.
+# Excluded: banks with a recent large deal or share count jump that distorts LTM (Associated Banc-Corp, Columbia Banking,
+# Prosperity) and banks whose preferred stock could not be read cleanly from XBRL.
+
+[[peers]]
+name = "Zions Bancorporation (ZION)"
+ptbv = 1.44
+pe = 8.2
+rote = 0.1781
+# close $64.59; TCE $6,529M = equity $7,681M less preferred $66M less goodwill and intangibles $1,086M; 145.9M shares; LTM net income to common $1,163M; LTM diluted EPS $7.85; CIK 109380
+
+[[peers]]
+name = "First Horizon (FHN)"
+ptbv = 1.59
+pe = 11.1
+rote = 0.1493
+# close $23.06; TCE $6,887M = equity $9,168M less preferred $682M less goodwill and intangibles $1,599M; 473.8M shares; LTM net income to common $1,028M; LTM diluted EPS $2.08; CIK 36966
+
+[[peers]]
+name = "F.N.B. Corp (FNB)"
+ptbv = 1.44
+pe = 10.5
+rote = 0.1395
+# close $17.66; TCE $4,329M = equity $6,839M less preferred $0M less goodwill and intangibles $2,510M; 353.0M shares; LTM net income to common $604M; LTM diluted EPS $1.68; CIK 37808
+
+[[peers]]
+name = "BOK Financial (BOKF)"
+ptbv = 1.53
+pe = 11.9
+rote = 0.1292
+# close $126.46; TCE $5,009M = equity $6,083M less preferred $0M less goodwill and intangibles $1,075M; 60.8M shares; LTM net income to common $647M; LTM diluted EPS $10.61; CIK 875357
+
+[[peers]]
+name = "East West Bancorp (EWBC)"
+ptbv = 2.00
+pe = 12.3
+rote = 0.1647
+# close $128.27; TCE $8,780M = equity $9,246M less preferred $0M less goodwill and intangibles $466M; 137.0M shares; LTM net income to common $1,446M; LTM diluted EPS $10.41; CIK 1069157
+
+[[peers]]
+name = "Commerce Bancshares (CBSH)"
+ptbv = 2.01
+pe = 13.6
+rote = 0.1472
+# close $55.58; TCE $3,963M = equity $4,358M less preferred $0M less goodwill and intangibles $394M; 143.4M shares; LTM net income to common $584M; LTM diluted EPS $4.08; CIK 22356
+
+[[peers]]
+name = "Cathay General Bancorp (CATY)"
+ptbv = 1.52
+pe = 11.9
+rote = 0.1301
+# close $60.67; TCE $2,669M = equity $3,047M less preferred $0M less goodwill and intangibles $378M; 66.8M shares; LTM net income to common $347M; LTM diluted EPS $5.11; CIK 861842
+
+[[peers]]
+name = "UMB Financial (UMBF)"
+ptbv = 1.85
+pe = 11.1
+rote = 0.1680
+# close $133.09; TCE $5,459M = equity $8,031M less preferred $294M less goodwill and intangibles $2,278M; 75.9M shares; LTM net income to common $917M; LTM diluted EPS $12.03; CIK 101382

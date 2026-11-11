@@ -1,0 +1,84 @@
+# REAL DEAL CASE. Eastern Bankshares (EBC) acquiring HarborOne Bancorp (HONE), announced
+# April 24, 2025. Money is in $ thousands, shares in thousands, prices in dollars.
+#
+# Sources:
+#   [D] Eastern investor presentation, 8-K Exhibit 99.3, filed April 24, 2025:
+#       https://www.sec.gov/Archives/edgar/data/1810546/000119312525093671/d945985dex993.htm
+#   [P] Press release, same 8-K, Exhibit 99.2:
+#       https://www.sec.gov/Archives/edgar/data/1810546/000119312525093671/d945985dex992.htm
+#   [Q] HarborOne Q1 2025 earnings release, 8-K Exhibit 99.1, filed April 24, 2025:
+#       https://www.sec.gov/Archives/edgar/data/1769617/000155837025005429/hone-20250424xex99d1.htm
+#   [E] Eastern Q1 2025 earnings release, 8-K Exhibit 99.1, filed April 24, 2025:
+#       https://www.sec.gov/Archives/edgar/data/1810546/000162828025019715/ebc-20250331xq12025earning.htm
+# "ASSUMPTION" marks an input the deck does not give; see the README section Real Deal Check.
+# All deck figures are the midpoint case (80% of HarborOne shares take stock) on a fully
+# synergized 2026E basis, so Year 1 and Year 2 inputs are the same 2026E numbers.
+
+[meta]
+name = "Eastern Bankshares / HarborOne Bancorp (Announced April 24, 2025)"
+illustrative = false
+source = "Eastern Bankshares 8-K filed 2025-04-24 (investor presentation and press release), HarborOne and Eastern Q1 2025 earnings releases; line-by-line citations in the case file"
+
+[acquirer]
+net_income = [358758, 358758]  # [D] slide 8 consensus EPS $1.71 x 209.8mm shares (slide 15). Year 2 = Year 1 (ASSUMPTION)
+shares = 209800                # [D] slide 15
+share_price = 15.48            # [P] April 23, 2025 close used for the exchange
+tbv = 2700000                  # [D] slide 15
+tangible_assets = 25000000     # ASSUMPTION: total assets $25.0bn at March 31, 2025 [P]; intangibles not deducted
+# Contribution analysis inputs, March 31, 2025.
+ltm_net_income = 224100        # [E] operating (non-GAAP) net income, Q2 2024 to Q1 2025: 37.1 + 51.3 + 68.2 + 67.5. GAAP LTM is a $136.8mm loss from the securities repositioning, so it is not used
+total_assets = 24986000        # [E]
+deposits = 20797100            # [E]
+loans = 17691400               # [E] net loans, to match target.loans (net)
+
+[target]
+net_income = [39000, 39000]    # ASSUMPTION: one waterfall bar of $39mm on slide 8, label unreadable in the filing; Year 2 = Year 1
+shares = 41200                 # Derived: 25.2mm new shares [D slide 15] / (0.80 x 0.765); matches the ESOP retirement note, slide 7
+share_price = 9.62             # ASSUMPTION: $430mm market cap [D slide 3] / 44.7mm shares ($532mm TBV / $11.90 TBVPS); drives the premium and the market cap contribution only
+tbv = 490280                   # Derived: $11.90 TBVPS [Q] x 41.2mm shares; the deck's 1.00x P/TBV only ties on this base ($532mm is on 44.7mm shares)
+tangible_assets = 5640720      # [Q] total assets 5,700,330 less goodwill 59,042 and intangibles 568
+noninterest_expense = 137500   # Derived: $55mm saves is ~40% of operating noninterest expense [D slide 7]
+core_deposits = 3542526        # [Q] deposits 4,618,721 less term certificates 1,076,195; the deck's CDI base is non-time deposits [D slide 13]
+loans = 4772000                # [D] slide 14 net loans
+securities = 285000            # [D] slide 14
+ltm_net_income = 24454         # [Q] core net income, Q2 2024 to Q1 2025: 6,689 + 3,924 + 8,341 + 5,500 (GAAP 25,607)
+total_assets = 5700330         # [Q]
+deposits = 4618721             # [Q]
+
+[deal]
+price_per_share = 11.87376     # 0.80 x 0.765 x $15.48 + 0.20 x $12.00 [P], midpoint blended per HarborOne share
+stock_pct = 0.79788            # stock value / total: 9.47376 / 11.87376
+exchange_ratio = 0.765          # [P] announced: 0.765 Eastern shares per HarborOne share electing stock
+cost_of_cash = 0.031           # [D] slide 8: ~3.1% yield on cash in 2026
+cost_saves_pct = 0.40          # [D] slide 7
+phase_in = [1.0, 1.0]          # fully synergized [D] slide 8
+merger_charges = 65000         # [D] slide 7, pre-tax
+day2_reserve = 42000           # [D] slide 15 footnote 2: $42mm pre-tax reserve on non-PCD loans
+revenue_dissynergies = 6000    # [D] slide 7: Durbin dis-synergy, pre-tax, annual
+cdi_pct = 0.03                 # [D] slide 7
+cdi_years = 10                 # [D] slide 7
+cdi_method = "syd"             # [D] slide 7: sum of years digits
+cdi_tax_treatment = "gross"    # [D] slide 15 deducts the full goodwill and CDI from TBV; the CDI deferred tax liability is not netted
+tax_rate = 0.226               # Derived from [D] slide 14: $234mm pre-tax mark, $181mm after-tax
+
+[marks]
+loan_duration = 3.0            # ASSUMPTION; with the rate change below it reproduces the deck's $234mm net loan mark
+loan_rate_change = 0.016345    # Calibrated: 234,000 / (3.0 x 4,772,000)
+loan_life = 5                  # [D] slide 7: 5-year straight line
+securities_duration = 0.0      # [D] slide 14: securities carried at fair value, mark of $0
+securities_rate_change = 0.0
+securities_life = 5
+deposit_mark = 1000            # [D] slide 14: deposits carried $4,619mm, fair value $4,618mm, $1mm pre-tax gain
+deposit_life = 1               # [D] slide 14: amortized over 1 year
+borrowings_mark = 0            # [D] slide 13: under $1mm, not amortized because the FHLB advances are repaid
+borrowings_life = 1
+
+[restructuring]
+securities_sold = 285000       # [D] slide 13: sell AFS and HTM securities of $285mm, proceeds repay FHLB advances
+securities_yield = 0.0233      # [Q] Q1 2025 average yield on investment securities, 2.33%
+borrowing_rate = 0.0438        # [Q] Q1 2025 average cost of total borrowings, 4.38%; the deck gives no rate for the advances repaid
+
+[credit_mark]
+total = 104000                 # [D] slide 13: gross credit mark 2.0% of total loans, $104mm
+pcd_share = 0.60               # [D] slide 13: 60% PCD (allowance gross-up, not accreted), 40% non-PCD
+life = 5                       # ASSUMPTION: the deck says the non-PCD mark is accreted but gives no life; set equal to the 5-year loan mark

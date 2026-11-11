@@ -1,0 +1,196 @@
+# CASE WITH REAL PRECEDENT DEALS. The target and the peer set are the made-up Illustrative Regional Bank from
+# bank_sample.toml (not a real company, not market data). Core deposits for the target are an assumed round number.
+# The [precedents] deals are real US bank deals announced 2025 to 2026. Every figure below is copied from the
+# source URL on that row: company press releases or 8-K investor decks where the multiple is stated there, and the
+# financial advisor fairness analysis summary in the SEC merger proxy (424B3) where it is not.
+# Caution: advisors define tangible book, LTM earnings and core deposits a little differently (for example core
+# deposits are total deposits less time deposits over $100,000 and foreign deposits in the Hovde tables). Most of
+# these targets are small banks, so the sample skews to small deals. Money is in $ millions, shares in millions.
+
+[meta]
+name = "Illustrative Regional Bank With Real Precedent Deals"
+illustrative = true
+
+[target]
+net_income = 120        # last twelve months
+tce = 1100              # tangible common equity
+total_assets = 14000
+shares = 50
+dividends = 40          # last twelve months, total
+share_price = 28.00
+
+[forecast]
+net_income_growth = [0.06, 0.06, 0.05, 0.05, 0.04]
+asset_growth = [0.04, 0.04, 0.04, 0.04, 0.03]
+
+[capital]
+target_tce_ratio = 0.08   # TCE / total assets; capital above this is paid out
+
+[cost_of_equity]          # CAPM
+risk_free = 0.04
+beta = 1.1
+erp = 0.05
+
+[terminal]
+growth = 0.03
+ptbv = 1.3                # exit P/TBV applied to year 5 TCE
+
+[valuation]
+range_pct = 0.10          # football field band around the point estimates for regression and P/E
+
+[[peers]]
+name = "Peer A"
+ptbv = 1.00
+pe = 11.5
+rote = 0.09
+
+[[peers]]
+name = "Peer B"
+ptbv = 1.25
+pe = 10.8
+rote = 0.11
+
+[[peers]]
+name = "Peer C"
+ptbv = 1.35
+pe = 11.2
+rote = 0.12
+
+[[peers]]
+name = "Peer D"
+ptbv = 1.70
+pe = 12.1
+rote = 0.14
+
+[[peers]]
+name = "Peer E"
+ptbv = 1.75
+pe = 11.9
+rote = 0.15
+
+[[peers]]
+name = "Peer F"
+ptbv = 2.10
+pe = 12.6
+rote = 0.17
+
+[[peers]]
+name = "Peer G"
+ptbv = 1.10
+pe = 10.5
+rote = 0.10
+
+[[peers]]
+name = "Peer H"
+ptbv = 1.55
+pe = 11.8
+rote = 0.13
+
+[precedents]
+note = "Real deals with sources on the Inputs sheet. The target and peers are made up."
+as_of = 2026-10-21
+max_age_years = 2         # only deals announced within 2 years of as_of
+target_core_deposits = 9500   # ASSUMED for the illustrative target, $ millions
+
+# Nicolet Bankshares / MidWestOne Financial Group, announced 2025-10-23. Press release (investor site).
+# Stated: aggregate value about $864 million, price to tangible book value per share 166%, price to mean analyst
+# estimated 2026 EPS 11.5x. The P/E is forward, not LTM, so P / LTM EPS is left out. No core deposit premium stated.
+[[precedents.deals]]
+date = 2025-10-23
+acquirer = "Nicolet Bankshares"
+target = "MidWestOne Financial Group"
+deal_value = 864.0
+ptbv = 1.66
+source = "https://investors.nicoletbank.com/news-market-information/press-releases/news-details/2025/Nicolet-Bankshares-Inc--Announces-Merger-with-MidWestOne-Financial-Group-Inc-/default.aspx"
+
+# Seacoast Banking Corp of Florida / Villages Bancorporation, announced 2025-05-29. 8-K investor presentation, slide 33.
+# Stated: implied aggregate transaction value $710.8 million, price / tangible book value per share 161%,
+# price / LTM earnings 15.8x. The deck gives no core deposit premium (it shows a core deposit intangible of 3.2%).
+[[precedents.deals]]
+date = 2025-05-29
+acquirer = "Seacoast Banking Corp of Florida"
+target = "Villages Bancorporation"
+deal_value = 710.8
+ptbv = 1.61
+pe_ltm = 15.8
+source = "https://www.sec.gov/Archives/edgar/data/730708/000073070825000198/sbcf_aug2025investorpres.htm"
+
+# Columbia Banking System / Pacific Premier Bancorp, announced 2025-04-23 (joint press release). Piper Sandler
+# analysis in the Columbia/Pacific Premier merger proxy (424B3): implied transaction value about $2.0 billion,
+# price / March 31 2025 tangible book value 99%, price / LTM GAAP EPS 13.7x, core deposit premium (0.0%).
+# KBW's table in the same filing shows 0.99x, 13.4x on LTM core EPS and (0.0%). Piper Sandler figures used.
+[[precedents.deals]]
+date = 2025-04-23
+acquirer = "Columbia Banking System"
+target = "Pacific Premier Bancorp"
+deal_value = 2000.0
+ptbv = 0.99
+pe_ltm = 13.7
+cdp = 0.0
+source = "https://www.sec.gov/Archives/edgar/data/887343/000119312525141452/d936202d424b3.htm"
+
+# First Community Corp / Signature Bank, announced 2025-07-14. Hovde analysis in the First Community 424B3 on
+# March 31 2025 results: total merger value $42,462,251, price to LTM earnings 25.0x, price to common tangible
+# book 123.2%, premium to core deposits 4.22%.
+[[precedents.deals]]
+date = 2025-07-14
+acquirer = "First Community Corp"
+target = "Signature Bank"
+deal_value = 42.5
+ptbv = 1.232
+pe_ltm = 25.0
+cdp = 0.0422
+source = "https://www.sec.gov/Archives/edgar/data/932781/000155278125000300/e25343_fcco-424b3.htm"
+
+# Bank First Corp / Centre 1 Bancorp, announced 2025-07-18. Hovde analysis in the Bank First 424B3 on March 31
+# 2025 results: total merger value $167,958,493, price to LTM earnings 26.3x, price to tangible book 204.4%,
+# premium to core deposits 7.24%.
+[[precedents.deals]]
+date = 2025-07-18
+acquirer = "Bank First Corp"
+target = "Centre 1 Bancorp"
+deal_value = 168.0
+ptbv = 2.044
+pe_ltm = 26.3
+cdp = 0.0724
+source = "https://www.sec.gov/Archives/edgar/data/1746109/000110465925095116/tm2524600-7_424b3.htm"
+
+# First Community Bankshares / Hometown Bankshares, announced 2025-07-21 (joint press release). Hovde analysis in
+# the First Community Bankshares S-4/A on June 30 2025 results: aggregate consideration $41.6 million, price to
+# common tangible book 186%, price to LTM earnings 7.9x (on tax-adjusted LTM earnings), premium to core deposits 5.7%.
+[[precedents.deals]]
+date = 2025-07-21
+acquirer = "First Community Bankshares"
+target = "Hometown Bankshares"
+deal_value = 41.6
+ptbv = 1.86
+pe_ltm = 7.9
+cdp = 0.057
+source = "https://www.sec.gov/Archives/edgar/data/859070/000143774925030607/fcbc20251003_s4a.htm"
+
+# Independent Bank Corp (Michigan) / HCB Financial Corp, announced 2026-03-18 (joint press release). Hovde analysis in
+# the Independent Bank Corp 424B3 on December 31 2025 results: aggregate consideration $70,807 thousand, price to
+# common tangible book 149%, price to LTM earnings 11.5x, premium to core deposits 5.2% (a later table in the same
+# filing shows 4.8%; the transaction multiples table is used).
+[[precedents.deals]]
+date = 2026-03-18
+acquirer = "Independent Bank Corp"
+target = "HCB Financial Corp"
+deal_value = 70.8
+ptbv = 1.49
+pe_ltm = 11.5
+cdp = 0.052
+source = "https://www.sec.gov/Archives/edgar/data/0000039311/000114036126022800/ny20070896x5_424b3.htm"
+
+# Peoples Bancorp Inc. / Citizens National Corporation, announced 2026-04-21 (joint press release). Hovde analysis in the Peoples
+# Bancorp 424B3: merger consideration about $76.6 million, price to common tangible book 120%, price to earnings
+# 13.7x (labeled Price to Earnings, on 2025 annual earnings of $5.7 million), purchase price premium / core deposits 2.7%.
+[[precedents.deals]]
+date = 2026-04-21
+acquirer = "Peoples Bancorp Inc."
+target = "Citizens National Corporation"
+deal_value = 76.6
+ptbv = 1.20
+pe_ltm = 13.7
+cdp = 0.027
+source = "https://www.sec.gov/Archives/edgar/data/0000318300/000119312526274189/d113523d424b3.htm"

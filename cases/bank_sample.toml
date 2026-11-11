@@ -1,0 +1,86 @@
+# ILLUSTRATIVE CASE. Made-up regional bank and made-up peers with round numbers.
+# Not a real company, not a forecast, not market data. Money is in $ millions,
+# shares in millions, share price in dollars.
+
+[meta]
+name = "Illustrative Regional Bank"
+illustrative = true
+
+[target]
+net_income = 120        # last twelve months
+tce = 1100              # tangible common equity
+total_assets = 14000
+shares = 50
+dividends = 40          # last twelve months, total
+share_price = 28.00
+# core_net_income is optional: LTM net income excluding one-time items. Left out, it equals net_income.
+
+[forecast]
+net_income_growth = [0.06, 0.06, 0.05, 0.05, 0.04]
+asset_growth = [0.04, 0.04, 0.04, 0.04, 0.03]
+
+[capital]
+target_tce_ratio = 0.08   # TCE / total assets; capital above this is paid out
+max_payout = 1.0          # cap on distributions / net income (optional, default 1.0)
+
+[cost_of_equity]          # CAPM
+risk_free = 0.04
+beta = 1.1
+erp = 0.05
+
+[terminal]
+growth = 0.03
+ptbv = 1.3                # exit P/TBV applied to year 5 TCE
+
+[valuation]
+range_pct = 0.10          # football field band around the point estimates for regression and P/E
+
+# Peer multiples are trailing (price / LTM). P/TBV is spread around the ROTE line on purpose,
+# so the regression fit (R squared about 0.56) looks like a real peer set.
+[[peers]]
+name = "Peer A"
+ptbv = 1.05
+pe = 11.5
+rote = 0.09
+
+[[peers]]
+name = "Peer B"
+ptbv = 1.50
+pe = 10.8
+rote = 0.11
+
+[[peers]]
+name = "Peer C"
+ptbv = 1.20
+pe = 11.2
+rote = 0.12
+
+[[peers]]
+name = "Peer D"
+ptbv = 1.40
+pe = 12.1
+rote = 0.14
+
+[[peers]]
+name = "Peer E"
+ptbv = 1.90
+pe = 11.9
+rote = 0.15
+
+[[peers]]
+name = "Peer F"
+ptbv = 1.75
+pe = 12.6
+rote = 0.17
+
+[[peers]]
+name = "Peer G"
+ptbv = 1.35
+pe = 10.5
+rote = 0.10
+
+[[peers]]
+name = "Peer H"
+ptbv = 1.80
+pe = 11.8
+rote = 0.13

@@ -1,0 +1,16 @@
+{
+  "cik": 0,
+  "entityName": "Synthetic Fixture Co (not a real filer)",
+  "facts": {
+    "us-gaap": {
+      "Revenues": {"units": {"USD": [
+        {"end": "2022-12-31", "val": 900000000, "fy": 2022, "fp": "FY", "form": "10-K", "filed": "2023-02-15", "accn": "0000000000-23-000001"},
+        {"end": "2023-12-31", "val": 1000000000, "fy": 2023, "fp": "FY", "form": "10-K", "filed": "2024-02-15", "accn": "0000000000-24-000001"},
+        {"end": "2024-03-31", "val": 260000000, "fy": 2024, "fp": "Q1", "form": "10-Q", "filed": "2024-05-01", "accn": "0000000000-24-000002"}
+      ]}},
+      "EarningsPerShareDiluted": {"units": {"USD/shares": [
+        {"end": "2023-12-31", "val": 2.5, "fy": 2023, "fp": "FY", "form": "10-K", "filed": "2024-02-15", "accn": "0000000000-24-000001"}
+      ]}}
+    }
+  }
+}
