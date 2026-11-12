@@ -69,10 +69,78 @@ Python 3.11+.
 python3 -m venv .venv && ./.venv/bin/pip install -r requirements.txt
 ./.venv/bin/python -m ibtoolkit merger cases/merger_real_eastern_harborone.toml --out output/merger.xlsx
 ./.venv/bin/python -m ibtoolkit lbo cases/lbo_sample.toml --out output/lbo.xlsx
-./.venv/bin/python -m pytest -q        # 271 tests, both IBToolkit and the screener
+./.venv/bin/python -m pytest -q        # 334 tests, both IBToolkit and the screener
 ```
 
 Add `--pitch FILE.html` for a printable summary page, or `--csv DIR` for CSV copies of each sheet.
+
+## Filing intake
+
+Typing a company's numbers into a case file by hand is slow and easy to get wrong. The intake step reads them from the company's own filings and writes a draft case file. Every number in the draft says which filing it came from. If the filings do not give a number, the draft says TODO. It never guesses.
+
+```mermaid
+flowchart LR
+    A[Ticker or 10-K PDF] --> B[Sourced values<br/>each with filing and tag or page]
+    B --> C[Draft TOML<br/>draft = true, TODO for gaps]
+    C --> D[Review<br/>--review]
+    D -->|fix flags, fill TODOs| C
+    D --> E[Approve<br/>--approve]
+    E --> F[dcf command]
+```
+
+You can start from a ticker (SEC XBRL data) or from a 10-K or 10-Q PDF. The draft stays marked `draft = true`, and the `dcf` command refuses to run it until you review and approve it.
+
+Set `SEC_USER_AGENT` to your own name and contact email before calling the SEC. The SEC asks every automated client to identify itself. The tool never stores it and has no default. The tests use a placeholder (`admin@example.com`) and never touch the network.
+
+```bash
+export SEC_USER_AGENT="Your Name your.email@example.com"
+python -m ibtoolkit intake --ticker HD                      # pulls from SEC EDGAR
+python -m ibtoolkit intake --pdf hd_10k.pdf --ticker HD     # reads a PDF instead (needs pdfplumber)
+```
+
+The run below uses a saved copy of Home Depot's company facts, so it works offline. Output is trimmed.
+
+```text
+$ python -m ibtoolkit intake --ticker HD --facts tests/fixtures/companyfacts_hd.json --out cases/draft_hd_dcf.toml
+Wrote cases/draft_hd_dcf.toml (The Home Depot, Inc., CIK 354950)
+20 sourced values, 18 TODO items, 0 flagged
+Next: python -m ibtoolkit intake --review cases/draft_hd_dcf.toml
+
+$ python -m ibtoolkit intake --review cases/draft_hd_dcf.toml
+Review of cases/draft_hd_dcf.toml (draft = true)
+
+field                   value       period              status  source
+cash                    2,085.0M    instant 2026-08-02  ok      10-Q accn 0001628280-26-058715 tag CashAndCashEq
+d_and_a                 3,633.0M    LTM 2026-08-02      ok      10-Q accn 0001628280-26-019436, 0001628280-26-05
+debt                    52,896.0M   instant 2026-08-02  ok      10-Q accn 0001628280-26-058715 tag LongTermDebtA
+diluted_shares          996.000M    Q 2026-08-02        ok      10-Q accn 0001628280-26-058715 tag WeightedAvera
+operating_income        21,022.0M   LTM 2026-08-02      ok      10-Q accn 0001628280-26-019436, 0001628280-26-05
+revenue                 169,176.0M  LTM 2026-08-02      ok      10-Q accn 0001628280-26-019436, 0001628280-26-05
+...
+Flags: 0 unresolved of 0
+TODOs: 18
+  - TODO target.ntm_revenue: next-twelve-month revenue needs consensus or management guidance; none in the filin
+  - TODO dcf.tax_rate: forecast tax rate. Reference only: LTM tax / (net income + tax) = 24.1% (effective rate,
+  - TODO dcf.beta: beta.
+  ...
+```
+
+The draft file puts the source next to each number, and a TODO where the filings run out:
+
+```toml
+[target]
+...
+# Revenue, last twelve months to 2026-08-02, $M.
+#   Source: LTM to 2026-08-02 = 10-K FY2025 accn 0001628280-26-019436 tag
+#    RevenueFromContractWithCustomerExcludingAssessedTax + 10-Q Q2 FY2026 (YTD to 2026-08-02) accn
+#    0001628280-26-058715 tag RevenueFromContractWithCustomerExcludingAssessedTax - 10-Q Q2 FY2025 (YTD to 2025-08-03)
+#    accn 0001628280-26-058715 tag RevenueFromContractWithCustomerExcludingAssessedTax
+ltm_revenue = 169176
+
+# TODO target.ntm_revenue: next-twelve-month revenue needs consensus or management guidance; none in the filings
+```
+
+If the inputs to a combined number come from different dates, the draft writes a TODO instead of a number. This covers EBITDA (operating income plus D&A) and net debt (debt less cash). Values the tool is unsure about are flagged in the review table, and `--approve` stops until you accept or fix each flag.
 
 ## How it's checked
 

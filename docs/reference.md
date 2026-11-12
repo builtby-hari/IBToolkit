@@ -262,3 +262,83 @@ Build a workbook from any case (writes `output/` and is git-ignored):
 ```
 
 The same command accepts `--csv DIR` for CSV copies of each sheet and `--pitch FILE.html` for a printable page.
+
+## 9. Filing intake
+
+`ibtoolkit/intake/` turns SEC filings into a draft DCF case file. The rule is that every number carries its source, and no source means a TODO.
+
+**Flow.** `--ticker` (SEC XBRL company facts) or `--pdf` (a 10-K or 10-Q PDF) gives a list of sourced values. `draft.py` writes them to a draft TOML. `--review` prints a table of values, flags and TODOs. `--approve` sets `draft = false` once nothing is left to fix. Then `dcf` will run the file.
+
+```mermaid
+flowchart LR
+    A[Ticker or 10-K PDF] --> B[Sourced values<br/>each with filing and tag or page]
+    B --> C[Draft TOML<br/>draft = true, TODO for gaps]
+    C --> D[Review<br/>--review]
+    D -->|fix flags, fill TODOs| C
+    D --> E[Approve<br/>--approve]
+    E --> F[dcf command]
+```
+
+**Commands.**
+
+```bash
+export SEC_USER_AGENT="Your Name your.email@example.com"   # your own contact, required for SEC calls
+python -m ibtoolkit intake --ticker HD [--out FILE] [--force]
+python -m ibtoolkit intake --ticker HD --facts tests/fixtures/companyfacts_hd.json   # saved facts, no network
+python -m ibtoolkit intake --pdf filing.pdf [--ticker HD]                            # needs pdfplumber
+python -m ibtoolkit intake --review cases/draft_hd_dcf.toml [--approve [--accept-flags]]
+```
+
+`SEC_USER_AGENT` must hold your own name and contact. The SEC uses it to reach you if your requests cause trouble. Nothing in the code supplies one. PDF reading needs the packages in `requirements-intake.txt`. A PDF draft has no CIK and cites page numbers (`file.pdf p.47`) instead of filing and tag.
+
+**Terminal capture** (offline, from the saved Home Depot facts; trimmed).
+
+```text
+$ python -m ibtoolkit intake --ticker HD --facts tests/fixtures/companyfacts_hd.json --out cases/draft_hd_dcf.toml
+Wrote cases/draft_hd_dcf.toml (The Home Depot, Inc., CIK 354950)
+20 sourced values, 18 TODO items, 0 flagged
+Next: python -m ibtoolkit intake --review cases/draft_hd_dcf.toml
+
+$ python -m ibtoolkit intake --review cases/draft_hd_dcf.toml
+Review of cases/draft_hd_dcf.toml (draft = true)
+
+field                   value       period              status  source
+cash                    2,085.0M    instant 2026-08-02  ok      10-Q accn 0001628280-26-058715 tag CashAndCashEq
+d_and_a                 3,633.0M    LTM 2026-08-02      ok      10-Q accn 0001628280-26-019436, 0001628280-26-05
+debt                    52,896.0M   instant 2026-08-02  ok      10-Q accn 0001628280-26-058715 tag LongTermDebtA
+diluted_shares          996.000M    Q 2026-08-02        ok      10-Q accn 0001628280-26-058715 tag WeightedAvera
+operating_income        21,022.0M   LTM 2026-08-02      ok      10-Q accn 0001628280-26-019436, 0001628280-26-05
+revenue                 169,176.0M  LTM 2026-08-02      ok      10-Q accn 0001628280-26-019436, 0001628280-26-05
+...
+Flags: 0 unresolved of 0
+TODOs: 18
+  - TODO target.ntm_revenue: next-twelve-month revenue needs consensus or management guidance; none in the filin
+  - TODO dcf.tax_rate: forecast tax rate. Reference only: LTM tax / (net income + tax) = 24.1% (effective rate,
+  - TODO dcf.beta: beta.
+  ...
+```
+
+**Draft excerpt.**
+
+```toml
+[target]
+...
+# Revenue, last twelve months to 2026-08-02, $M.
+#   Source: LTM to 2026-08-02 = 10-K FY2025 accn 0001628280-26-019436 tag
+#    RevenueFromContractWithCustomerExcludingAssessedTax + 10-Q Q2 FY2026 (YTD to 2026-08-02) accn
+#    0001628280-26-058715 tag RevenueFromContractWithCustomerExcludingAssessedTax - 10-Q Q2 FY2025 (YTD to 2025-08-03)
+#    accn 0001628280-26-058715 tag RevenueFromContractWithCustomerExcludingAssessedTax
+ltm_revenue = 169176
+
+# TODO target.ntm_revenue: next-twelve-month revenue needs consensus or management guidance; none in the filings
+```
+
+**How values are picked.**
+
+- Only 10-K and 10-Q rows count. A period that appears again in a later filing takes the latest filed row, and a note records any restatement.
+- Flow fields (revenue, operating income, and so on) are built as LTM = latest fiscal year + current year to date - prior-year year to date. The draft uses LTM, or the fiscal year when no LTM exists.
+- Each field uses the tag with the most recent fiscal year. For revenue, if two tags cover the same year, the larger value is used and a note names the smaller one. This stops a narrow contract-revenue tag from understating a holding company.
+- Total debt is the noncurrent piece plus the current piece at the same date. If only the noncurrent piece is found, the value is flagged.
+- EBITDA and net debt are written only when their inputs share a period and carry no stale-tag flag. Otherwise the draft shows a TODO with the reason.
+
+**Flags** appear when a later 10-Q exists but does not report a tag (the LTM is only the fiscal year), when a year to date exists with no prior-year match, when a tag stopped being used more than a year before the newest period, and when only part of the debt is found. `--approve` refuses while any flag is unresolved unless you pass `--accept-flags`.

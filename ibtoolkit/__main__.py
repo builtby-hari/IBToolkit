@@ -5,6 +5,7 @@ import tomllib
 
 from . import (bank, bank_book, comps, csv_export, dcf, dcf_book, debtcap, debtcap_book, excel, fdic, lbo,
                lbo_book, merger, merger_book, pitch, precedents)
+from .intake import cli as intake_cli
 
 
 def _merger(a):
@@ -60,9 +61,12 @@ def main(argv=None):
     q = sub.add_parser("fdic", help="Print a [target] case snippet from FDIC BankFind (public API)")
     q.add_argument("cert", type=int)
     q.add_argument("repdte", help="Report date, for example 20241231")
+    intake_cli.add_parser(sub)
     a = p.parse_args(argv)
     if a.cmd == "fdic":
         return _fdic(a)
+    if a.cmd == "intake":
+        return intake_cli.run(a)
     try:
         rc = {"merger": _merger, "dcf": _dcf, "bank": _bank, "lbo": _lbo, "debtcap": _debtcap}[a.cmd](a)
         if rc == 0 and a.csv:

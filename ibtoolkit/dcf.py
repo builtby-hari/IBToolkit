@@ -40,6 +40,9 @@ def _section(raw, name, fields, label=None):
 
 def validate(raw):
     """Return a clean case dict, or raise CaseError naming the field."""
+    if raw.get("meta", {}).get("draft") is True:
+        raise CaseError("This case is a DRAFT ([meta] draft = true) built by filing intake and is not safe to run. "
+                        "Fill in every TODO, then run `python -m ibtoolkit intake --review <file>` and `--approve`.")
     case = {"meta": dict(raw.get("meta", {})), "target": _section(raw, "target", TARGET)}
     case["dcf"] = _section(raw, "dcf", DCF)
     mid = raw["dcf"].get("mid_year", False)
