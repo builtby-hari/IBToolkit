@@ -367,8 +367,9 @@ def lbo_pages(p):
     g1 = p.grid(SE, "Grid 1,")
     g2 = p.grid(SE, "Grid 2,")
     items = []
+    top = g1["top"]
     for r in g1["rows"]:
-        label = f'Entry {p.n(SE, f"A{r}", tag="tspan", cls="")}, exit {p.n(SE, f"B{g1["top"]}", tag="tspan", cls="")} to {p.n(SE, f"F{g1["top"]}", tag="tspan", cls="")}'
+        label = f'Entry {p.n(SE, f"A{r}", tag="tspan", cls="")}, exit {p.n(SE, f"B{top}", tag="tspan", cls="")} to {p.n(SE, f"F{top}", tag="tspan", cls="")}'
         items.append((label, (SE, f"B{r}"), (SE, f"F{r}"), (SE, f"D{r}")))
     sens = page("Football Field and Sensitivity",
                 "<h3>Sponsor IRR Range by Entry Multiple</h3>" + p.football(items)

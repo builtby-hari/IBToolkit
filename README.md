@@ -1,5 +1,7 @@
 # IBToolkit
 
+[![tests](https://github.com/builtby-hari/IBToolkit/actions/workflows/tests.yml/badge.svg)](https://github.com/builtby-hari/IBToolkit/actions/workflows/tests.yml) ![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue) [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 Python models for the valuation work a junior banker does: DCF, trading comps, precedent deals, LBO returns, debt capacity, bank valuation and bank merger math. Each one reads a plain-text case file and writes an Excel workbook with live formulas, so anyone can open it and see how every number was built.
 
 The test I care about: I rebuilt a real bank merger from its public filings, and the model lands on the deal deck's **$1.98 Year 1 EPS** and **1.00x price to tangible book**. Where it doesn't match, the gap is written down below.
@@ -62,6 +64,12 @@ Reading the table:
 **[Small business screener](smb/).** An illustrative laundromat at 2.7x SDE (the owner's total take from the business) clears the SBA lender's 1.25x coverage test at **2.22x** and returns a 29% equity IRR.
 
 ## Run it
+
+Try it in one line (clone, set up a venv, rebuild the real merger):
+
+```bash
+git clone https://github.com/builtby-hari/IBToolkit.git && cd IBToolkit && python3 -m venv .venv && ./.venv/bin/pip install -r requirements.txt && ./.venv/bin/python -m ibtoolkit merger cases/merger_real_eastern_harborone.toml --out output/merger.xlsx
+```
 
 Python 3.11+.
 
